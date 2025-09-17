@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lpradene <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/18 16:10:43 by lpradene          #+#    #+#             */
-/*   Updated: 2022/11/30 23:47:00 by lpradene         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "get_next_line.h"
 
 char	*get_next_line(int fd)
@@ -18,54 +6,49 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (0);
-	read_buf(&stash, fd);
+		return (NULL);
+	read_file(&stash, fd);
 	if (!stash)
-		return (0);
+		return (NULL);
 	make_line(&line, stash);
 	clean_stash(&stash);
-	if (line[0] == '\0')
-	{
+	if (line[0] == '\0') {
 		free(stash);
-		stash = 0;
+		stash = NULL;
 		free(line);
-		return (0);
+		return (NULL);
 	}
 	return (line);
 }
 
-void	read_buf(char **stash, int fd)
+void	read_file(char **stash, int fd)
 {
-	char	*buf;
+	char	buf[BUFFER_SIZE + 1];
 	int		readc;
 
-	readc = 1;
-	while (!search_newline(*stash) && readc != 0)
-	{
-		buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-		if (!buf)
-			return ;
+	while (ft_strchr(*stash, '\n') == NULL) {
+		ft_memset(buf, 0, BUFFER_SIZE + 1);
 		readc = read(fd, buf, BUFFER_SIZE);
-		if ((*stash == NULL && readc == -1) || readc == 0)
-		{
+		if ((*stash == NULL && readc == -1) || readc == 0) {
 			free(buf);
 			return ;
 		}
 		buf[readc] = '\0';
 		add_to_stash(stash, buf, readc);
-		free(buf);
 	}
 }
 
 void	add_to_stash(char **stash, char *buf, int readc)
 {
 	char	*s;
+	int		size;
 
-	s = malloc(sizeof(char) * (ft_strlen(*stash) + readc + 1));
-	if (!s)
+	size = (int)ft_strlen(*stash);
+	s = malloc(sizeof(char) * (size + readc + 1));
+	if (s == NULL)
 		return ;
-	ft_memcpy(s, *stash, ft_strlen(*stash));
-	ft_memcpy(s + ft_strlen(*stash), buf, readc + 1);
+	ft_memcpy(s, *stash, size);
+	ft_memcpy(s + size, buf, readc + 1);
 	free(*stash);
 	*stash = s;
 }
@@ -74,15 +57,15 @@ void	make_line(char **line, char *stash)
 {
 	int	i;
 
-	if (!stash)
+	if (stash == NULL)
 		return ;
 	i = 0;
-	while (stash[i] != '\n' && stash[i])
+	while (stash[i] != '\0' && stash[i] != '\n')
 		i++;
 	if (stash[i] == '\n')
 		i++;
 	*line = malloc(sizeof(char) * (i + 1));
-	if (!(*line))
+	if ((*line) == NULL)
 		return ;
 	ft_memcpy(*line, stash, i);
 	(*line)[i] = '\0';
@@ -94,19 +77,18 @@ void	clean_stash(char **stash)
 	int		j;
 	char	*s;
 
-	if (!(*stash))
+	if ((*stash) == NULL)
 		return ;
 	i = 0;
-	while ((*stash)[i] != '\n' && (*stash)[i])
+	while ((*stash)[i] != '\0' && (*stash)[i] != '\n')
 		i++;
 	if ((*stash)[i] == '\n')
 		i++;
 	s = malloc(sizeof(char) * (ft_strlen(*stash) - i + 1));
-	if (!s)
+	if (s == NULL)
 		return ;
 	j = 0;
-	while ((*stash)[i])
-	{
+	while ((*stash)[i] != '\0') {
 		s[j] = (*stash)[i];
 		j++;
 		i++;

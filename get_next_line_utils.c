@@ -1,22 +1,9 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lpradene <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/18 17:01:30 by lpradene          #+#    #+#             */
-/*   Updated: 2022/11/18 17:41:18 by lpradene         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "get_next_line.h"
 
-int	ft_strlen(char *s)
-{
+size_t	ft_strlen(const char *s) {
 	int	i;
 
-	if (!s)
+	if (s == NULL)
 		return (0);
 	i = 0;
 	while (s[i])
@@ -24,20 +11,22 @@ int	ft_strlen(char *s)
 	return (i);
 }
 
-int	search_newline(char *stash)
-{
+char	*ft_strchr(const char *s, int c) {
 	int	i;
+	int size;
 
-	if (!stash)
-		return (0);
+	if (s == NULL) {
+		return (NULL);
+	}
 	i = 0;
-	while (stash[i])
-	{
-		if (stash[i] == '\n')
-			return (1);
+	size = (int)ft_strlen(s);
+	while (i <= size) {
+		if (s[i] == (char)c) {
+			return ((char *)s + i);
+		}
 		i++;
 	}
-	return (0);
+	return (NULL);
 }
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
@@ -45,10 +34,19 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	size_t	i;
 
 	i = 0;
-	while (i < n)
-	{
+	while (i < n) {
 		((char *)dest)[i] = ((char *)src)[i];
 		i++;
 	}
 	return (dest);
+}
+
+void	*ft_memset(void *s, int value, size_t n) {
+	size_t	i;
+
+	i = 0;
+	while (i < n) {
+		((char *)s)[i++] = value;
+	}
+	return (s);
 }
