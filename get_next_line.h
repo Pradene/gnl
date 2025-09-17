@@ -11,10 +11,6 @@
 # include <unistd.h>
 
 char	*get_next_line(int fd);
-void	read_file(char **stash, int fd);
-void	add_to_stash(char **stash, char *buf, int readc);
-void	make_line(char **line, char *stash);
-void	clean_stash(char **stash);
 
 size_t	ft_strlen(const char *s);
 char	*ft_strchr(const char *string, int c);
